@@ -12,4 +12,4 @@ tree-sitter-c-sharp
 rich
 argparse
 rank_bm25
-numpyich>=13.0.0
+numpy
