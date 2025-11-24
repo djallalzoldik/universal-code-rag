@@ -6,7 +6,6 @@ Allows adding support for new languages by simply providing a query
 
 from typing import List, Optional, Dict
 from tree_sitter import Language, Parser, Node
-import importlib
 
 from .base_chunker import BaseChunker, CodeChunk
 from utils.logger import get_logger
@@ -15,13 +14,13 @@ class GenericTreeSitterChunker(BaseChunker):
     """
     A generic chunker that uses Tree-sitter queries to extract code blocks.
     Avoids writing a separate class for every language.
+    Uses tree-sitter-language-pack for easy access to 165+ languages.
     """
     
-    def __init__(self, language_name: str, package_name: str, query_scm: str):
+    def __init__(self, language_name: str, query_scm: str):
         """
         Args:
-            language_name: Name of the language (e.g., 'java')
-            package_name: Python package for the language (e.g., 'tree_sitter_java')
+            language_name: Name of the language (e.g., 'java', 'python')
             query_scm: S-expression query string for tree-sitter
         """
         super().__init__(language_name)
@@ -29,27 +28,15 @@ class GenericTreeSitterChunker(BaseChunker):
         self.query_scm = query_scm
         
         try:
-            # Dynamically import the language module
-            lang_module = importlib.import_module(package_name)
+            # Use tree-sitter-language-pack for simplified language loading
+            from tree_sitter_language_pack import get_language, get_parser
             
-            # Find the language function
-            if hasattr(lang_module, 'language'):
-                lang_func = lang_module.language
-            elif hasattr(lang_module, f'language_{language_name}'):
-                lang_func = getattr(lang_module, f'language_{language_name}')
-            else:
-                # Try to find any function starting with language_
-                potential_funcs = [n for n in dir(lang_module) if n.startswith('language_')]
-                if potential_funcs:
-                    lang_func = getattr(lang_module, potential_funcs[0])
-                else:
-                    raise AttributeError(f"Could not find language function in {package_name}")
-            
-            self.ts_language = Language(lang_func())
-            self.parser = Parser(self.ts_language)
+            self.ts_language = get_language(language_name)
+            self.parser = get_parser(language_name)
             self.query = self.ts_language.query(query_scm)
-        except ImportError:
-            self.logger.error(f"Could not import {package_name}. Please install it via pip.")
+            
+        except ImportError as e:
+            self.logger.error(f"Could not import tree-sitter-language-pack. Install it with: pip install tree-sitter-language-pack")
             raise
         except Exception as e:
             self.logger.error(f"Failed to initialize {language_name} parser: {e}")

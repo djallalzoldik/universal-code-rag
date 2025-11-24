@@ -35,42 +35,40 @@ class Config:
         
         # Tree-sitter Queries
         self.QUERIES = {
-            'java': """
-                (class_declaration) @class
-                (interface_declaration) @interface
-                (enum_declaration) @enum
-                (method_declaration) @method
-            """,
-            'go': """
-                (function_declaration) @function
-                (method_declaration) @method
-                (type_declaration) @struct
-            """,
-            'rust': """
-                (function_item) @function
-                (impl_item) @impl
-                (struct_item) @struct
-                (enum_item) @enum
-                (trait_item) @trait
-            """,
-            'ruby': """
-                (class) @class
-                (module) @module
-                (method) @method
-            """,
-            'php': """
-                (class_declaration) @class
-                (function_definition) @function
-                (method_declaration) @method
-                (trait_declaration) @trait
-            """,
-            'c_sharp': """
-                (class_declaration) @class
-                (interface_declaration) @interface
-                (enum_declaration) @enum
-                (method_declaration) @method
-                (namespace_declaration) @namespace
-            """
+            # Existing languages
+            'java': """(class_declaration) @class (interface_declaration) @interface (enum_declaration) @enum (method_declaration) @method""",
+            'go': """(function_declaration) @function (method_declaration) @method (type_declaration) @struct""",
+            'rust': """(function_item) @function (impl_item) @impl (struct_item) @struct (enum_item) @enum (trait_item) @trait""",
+            'ruby': """(class) @class (module) @module (method) @method""",
+            'php': """(class_declaration) @class (function_definition) @function (method_declaration) @method (trait_declaration) @trait""",
+            'c_sharp': """(class_declaration) @class (interface_declaration) @interface (enum_declaration) @enum (method_declaration) @method (namespace_declaration) @namespace""",
+            
+            # Web languages
+            'html': """(script_element) @script (style_element) @style (element) @element""",
+            'css': """(rule_set) @rule (declaration) @declaration""",
+            
+            # Data languages
+            'json': """(pair) @pair (object) @object (array) @array""",
+            'yaml': """(block_mapping_pair) @pair (block_sequence) @sequence""",
+            'toml': """(table) @table (pair) @pair""",
+            'xml': """(element) @element (attribute) @attribute""",
+            
+            # Query languages
+            'sql': """(select_statement) @select (create_statement) @create (function_definition) @function""",
+            
+            # Config/Scripts
+            'bash': """(function_definition) @function (command) @command""",
+            'dockerfile': """(from_instruction) @from (run_instruction) @run""",
+            
+            # JVM
+            'kotlin': """(class_declaration) @class (function_declaration) @function""",
+            'scala': """(class_definition) @class (function_definition) @function (object_definition) @object""",
+            
+            # Other popular
+            'lua': """(function_definition) @function (assignment_statement) @assignment""",
+            'haskell': """(function) @function (type_signature) @signature""",
+            'ocaml': """(value_definition) @function (type_definition) @type""",
+            'swift': """(class_declaration) @class (function_declaration) @function (protocol_declaration) @protocol"""
         }
         
         # File type configurations
@@ -106,55 +104,44 @@ class Config:
                 description='GN build system files'
             ),
             
-            # New Languages
-            'java': FileTypeConfig(
-                extensions=['.java'], 
-                language='java', 
-                parser_type='treesitter',
-                description='Java source files',
-                package_name='tree_sitter_java', 
-                query_scm=self.QUERIES['java']
-            ),
-            'go': FileTypeConfig(
-                extensions=['.go'], 
-                language='go', 
-                parser_type='treesitter',
-                description='Go source files',
-                package_name='tree_sitter_go', 
-                query_scm=self.QUERIES['go']
-            ),
-            'rust': FileTypeConfig(
-                extensions=['.rs'], 
-                language='rust', 
-                parser_type='treesitter',
-                description='Rust source files',
-                package_name='tree_sitter_rust', 
-                query_scm=self.QUERIES['rust']
-            ),
-            'ruby': FileTypeConfig(
-                extensions=['.rb'], 
-                language='ruby', 
-                parser_type='treesitter',
-                description='Ruby source files',
-                package_name='tree_sitter_ruby', 
-                query_scm=self.QUERIES['ruby']
-            ),
-            'php': FileTypeConfig(
-                extensions=['.php'], 
-                language='php', 
-                parser_type='treesitter',
-                description='PHP source files',
-                package_name='tree_sitter_php', 
-                query_scm=self.QUERIES['php']
-            ),
-            'c_sharp': FileTypeConfig(
-                extensions=['.cs'], 
-                language='c_sharp', 
-                parser_type='treesitter',
-                description='C# source files',
-                package_name='tree_sitter_c_sharp', 
-                query_scm=self.QUERIES['c_sharp']
-            ),
+            # JVM Languages
+            'java': FileTypeConfig(['.java'], 'java', 'treesitter', 'Java source', query_scm=self.QUERIES['java']),
+            'kotlin': FileTypeConfig(['.kt', '.kts'], 'kotlin', 'treesitter', 'Kotlin source', query_scm=self.QUERIES.get('kotlin')),
+            'scala': FileTypeConfig(['.scala'], 'scala', 'treesitter', 'Scala source', query_scm=self.QUERIES.get('scala')),
+            
+            # Systems Programming
+            'go': FileTypeConfig(['.go'], 'go', 'treesitter', 'Go source', query_scm=self.QUERIES['go']),
+            'rust': FileTypeConfig(['.rs'], 'rust', 'treesitter', 'Rust source', query_scm=self.QUERIES['rust']),
+            
+            # Dynamic Languages
+            'ruby': FileTypeConfig(['.rb'], 'ruby', 'treesitter', 'Ruby source', query_scm=self.QUERIES['ruby']),
+            'php': FileTypeConfig(['.php'], 'php', 'treesitter', 'PHP source', query_scm=self.QUERIES['php']),
+            'lua': FileTypeConfig(['.lua'], 'lua', 'treesitter', 'Lua source', query_scm=self.QUERIES.get('lua')),
+            
+            # .NET
+            'c_sharp': FileTypeConfig(['.cs'], 'c_sharp', 'treesitter', 'C# source', query_scm=self.QUERIES['c_sharp']),
+            
+            # Web Languages
+            'html': FileTypeConfig(['.html', '.htm'], 'html', 'treesitter', 'HTML files', query_scm=self.QUERIES.get('html')),
+            'css': FileTypeConfig(['.css', '.scss', '.sass', '.less'], 'css', 'treesitter', 'CSS files', query_scm=self.QUERIES.get('css')),
+            
+            # Data/Config
+            'json': FileTypeConfig(['.json'], 'json', 'treesitter', 'JSON files', query_scm=self.QUERIES.get('json')),
+            'yaml': FileTypeConfig(['.yaml', '.yml'], 'yaml', 'treesitter', 'YAML files', query_scm=self.QUERIES.get('yaml')),
+            'toml': FileTypeConfig(['.toml'], 'toml', 'treesitter', 'TOML files', query_scm=self.QUERIES.get('toml')),
+            'xml': FileTypeConfig(['.xml'], 'xml', 'treesitter', 'XML files', query_scm=self.QUERIES.get('xml')),
+            
+            # Query Languages
+            'sql': FileTypeConfig(['.sql'], 'sql', 'treesitter', 'SQL files', query_scm=self.QUERIES.get('sql')),
+            
+            # Scripts/Configs
+            'bash': FileTypeConfig(['.sh', '.bash'], 'bash', 'treesitter', 'Shell scripts', query_scm=self.QUERIES.get('bash')),
+            'dockerfile': FileTypeConfig(['Dockerfile','.dockerfile'], 'dockerfile', 'treesitter', 'Docker files', query_scm=self.QUERIES.get('dockerfile')),
+            
+            # Functional
+            'haskell': FileTypeConfig(['.hs'], 'haskell', 'treesitter', 'Haskell source', query_scm=self.QUERIES.get('haskell')),
+            'ocaml': FileTypeConfig(['.ml', '.mli'], 'ocaml', 'treesitter', 'OCaml source', query_scm=self.QUERIES.get('ocaml')),
+            'swift': FileTypeConfig(['.swift'], 'swift', 'treesitter', 'Swift source', query_scm=self.QUERIES.get('swift')),
         }
         
         # Indexing settings
