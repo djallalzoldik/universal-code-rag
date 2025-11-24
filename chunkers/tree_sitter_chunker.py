@@ -61,17 +61,17 @@ class GenericTreeSitterChunker(BaseChunker):
             tree = self.parser.parse(bytes(code, "utf8"))
             chunks = []
             
-            # Execute query
-            captures = self.query.captures(tree.root_node)
+            # Execute query using matches (correct API for tree-sitter-python)
+            matches = self.query.matches(tree.root_node)
             
-            # Captures is a list of (Node, capture_name) tuples
-            # We need to group them by node to handle multiple captures for same node if needed
-            # But typically we process each capture as a potential chunk
-            
-            for node, capture_name in captures:
-                chunk = self._create_chunk_from_capture(node, capture_name, code, filepath)
-                if chunk and self._should_include_chunk(chunk):
-                    chunks.append(chunk)
+            # matches is a list of (pattern_index, captures_dict) tuples
+            # captures_dict maps capture names to lists of nodes
+            for pattern_index, captures_dict in matches:
+                for capture_name, nodes in captures_dict.items():
+                    for node in nodes:
+                        chunk = self._create_chunk_from_capture(node, capture_name, code, filepath)
+                        if chunk and self._should_include_chunk(chunk):
+                            chunks.append(chunk)
             
             return chunks
             
