@@ -1,0 +1,45 @@
+# Sample GN build file for testing
+
+executable("chrome") {
+  sources = [
+    "main.cc",
+    "app.cc",
+    "render_frame_host.cc",
+  ]
+  
+  deps = [
+    "//base",
+    "//content/public/browser",
+    "//ui/base",
+  ]
+  
+  public_deps = [
+    "//content/public/common",
+  ]
+  
+  configs += [ ":chrome_config" ]
+}
+
+static_library("chrome_common") {
+  sources = [
+    "common/chrome_paths.cc",
+    "common/chrome_switches.cc",
+  ]
+  
+  deps = [
+    "//base",
+  ]
+}
+
+source_set("test_support") {
+  testonly = true
+  
+  sources = [
+    "test/chrome_test_suite.cc",
+  ]
+  
+  deps = [
+    ":chrome_common",
+    "//testing/gtest",
+  ]
+}

@@ -1,0 +1,37 @@
+// Sample Mojom interface for testing
+module chrome.mojom;
+
+// Interface for content settings
+interface ContentSettings {
+  // Get the setting for a specific content type
+  GetSetting(string content_type) => (int32 setting);
+  
+  // Set a content setting
+  SetSetting(string content_type, int32 value) => (bool success);
+  
+  // Reset all settings to default
+  ResetToDefaults() => ();
+};
+
+// Struct representing a permission
+struct Permission {
+  string name;
+  int32 level;
+  bool granted;
+};
+
+// Enum for content types
+enum ContentType {
+  COOKIES,
+  JAVASCRIPT,
+  POPUPS,
+  GEOLOCATION,
+  NOTIFICATIONS,
+};
+
+// Union for different setting values
+union SettingValue {
+  bool boolean_value;
+  int32 integer_value;
+  string string_value;
+};

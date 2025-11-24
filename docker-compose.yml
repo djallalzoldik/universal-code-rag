@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  chrome-rag:
+    build: .
+    image: chrome-rag
+    volumes:
+      - .:/app
+      - ./chrome_rag_db:/app/chrome_rag_db
+      - ./logs:/app/logs
+    # Keep container running if needed, or just use it for one-off commands
+    # command: tail -f /dev/null 
