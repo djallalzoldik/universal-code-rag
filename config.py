@@ -48,24 +48,31 @@ class Config:
             'css': """(rule_set) @rule (declaration) @declaration""",
             'typescript': """(class_declaration) @class (interface_declaration) @interface (function_declaration) @function (method_definition) @method""",
             'tsx': """(class_declaration) @class (function_declaration) @function (jsx_element) @component""",
+            'vue': """(script_element) @script (template_element) @template (style_element) @style""",
+            'svelte': """(script_element) @script (style_element) @style (element) @element""",
             
             # Data languages
             'json': """(pair) @pair (object) @object (array) @array""",
             'yaml': """(block_mapping_pair) @pair (block_sequence) @sequence""",
             'toml': """(table) @table (pair) @pair""",
             'xml': """(element) @element (attribute) @attribute""",
+            'graphql': """(operation_definition) @operation (field) @field (fragment_definition) @fragment""",
             
             # Query languages
             'sql': """(select_statement) @select (create_statement) @create (function_definition) @function""",
             
-            # Config/Scripts
+            # Config/Scripts  
             'bash': """(function_definition) @function (command) @command""",
             'dockerfile': """(from_instruction) @from (run_instruction) @run""",
             'perl': """(subroutine_declaration_statement) @function (package_statement) @package""",
+            'cmake': """(function_call) @function (macro_definition) @macro""",
+            'make': """(rule) @rule (variable_assignment) @variable""",
             
             # JVM
             'kotlin': """(class_declaration) @class (function_declaration) @function""",
             'scala': """(class_definition) @class (function_definition) @function (object_definition) @object""",
+            'groovy': """(class_declaration) @class (method_declaration) @method""",
+            'clojure': """(list_lit) @list (defn) @function""",
             
             # Functional/Dynamic
             'lua': """(function_definition) @function (assignment_statement) @assignment""",
@@ -75,22 +82,30 @@ class Config:
             'elixir': """(call) @function (defmodule) @module""",
             'erlang': """(function_clause) @function (module_attribute) @module""",
             
-            # Systems/New languages
+            # Systems/Compiled
             'zig': """(FnProto) @function (VarDecl) @variable""",
             'dart': """(class_definition) @class (function_signature) @function""",
             'nim': """(proc_declaration) @function (type_section) @type""",
+            'd': """(class_declaration) @class (function_declaration) @function""",
+            'cuda': """(function_definition) @function (kernel_call) @kernel""",
+            'fortran': """(subroutine) @subroutine (function) @function (module) @module""",
+            'asm': """(instruction) @instruction (label) @label""",
             
             # Documentation
             'markdown': """(atx_heading) @heading (fenced_code_block) @code (link_definition) @link""",
+            'rst': """(section) @section (directive) @directive""",
+            'latex': """(generic_command) @command (generic_environment) @environment""",
             
             # Scientific/Data
             'r': """(function_definition) @function (binary_operator) @operator""",
             'julia': """(function_definition) @function (struct_definition) @struct""",
+            'matlab': """(function_definition) @function (assignment) @assignment""",
             
             # Other
             'protobuf': """(message) @message (service) @service (rpc) @rpc""",
+            'thrift': """(struct) @struct (service) @service (function) @function""",
             'solidity': """(contract_declaration) @contract (function_definition) @function""",
-            'terraform': """(block) @resource (attribute) @attribute"""
+            'terraform': """(block) @resource (attribute) @attribute""",
         }
         
         # File type configurations
@@ -130,12 +145,18 @@ class Config:
             'java': FileTypeConfig(['.java'], 'java', 'treesitter', 'Java source', query_scm=self.QUERIES['java']),
             'kotlin': FileTypeConfig(['.kt', '.kts'], 'kotlin', 'treesitter', 'Kotlin source', query_scm=self.QUERIES.get('kotlin')),
             'scala': FileTypeConfig(['.scala'], 'scala', 'treesitter', 'Scala source', query_scm=self.QUERIES.get('scala')),
+            'groovy': FileTypeConfig(['.groovy', '.gradle'], 'groovy', 'treesitter', 'Groovy source', query_scm=self.QUERIES.get('groovy')),
+            'clojure': FileTypeConfig(['.clj', '.cljs', '.cljc'], 'clojure', 'treesitter', 'Clojure source', query_scm=self.QUERIES.get('clojure')),
             
             # Systems Programming
             'go': FileTypeConfig(['.go'], 'go', 'treesitter', 'Go source', query_scm=self.QUERIES['go']),
             'rust': FileTypeConfig(['.rs'], 'rust', 'treesitter', 'Rust source', query_scm=self.QUERIES['rust']),
             'zig': FileTypeConfig(['.zig'], 'zig', 'treesitter', 'Zig source', query_scm=self.QUERIES.get('zig')),
             'nim': FileTypeConfig(['.nim'], 'nim', 'treesitter', 'Nim source', query_scm=self.QUERIES.get('nim')),
+            'd': FileTypeConfig(['.d'], 'd', 'treesitter', 'D source', query_scm=self.QUERIES.get('d')),
+            'cuda': FileTypeConfig(['.cu', '.cuh'], 'cuda', 'treesitter', 'CUDA source', query_scm=self.QUERIES.get('cuda')),
+            'fortran': FileTypeConfig(['.f', '.f90', '.f95'], 'fortran', 'treesitter', 'Fortran source', query_scm=self.QUERIES.get('fortran')),
+            'asm': FileTypeConfig(['.asm', '.s'], 'asm', 'treesitter', 'Assembly source', query_scm=self.QUERIES.get('asm')),
             
             # Dynamic Languages
             'ruby': FileTypeConfig(['.rb'], 'ruby', 'treesitter', 'Ruby source', query_scm=self.QUERIES['ruby']),
@@ -146,7 +167,7 @@ class Config:
             'erlang': FileTypeConfig(['.erl', '.hrl'], 'erlang', 'treesitter', 'Erlang source', query_scm=self.QUERIES.get('erlang')),
             'dart': FileTypeConfig(['.dart'], 'dart', 'treesitter', 'Dart source', query_scm=self.QUERIES.get('dart')),
             
-            # .NET (FIXED: c_sharp -> csharp)
+            # .NET
             'csharp': FileTypeConfig(['.cs'], 'csharp', 'treesitter', 'C# source', query_scm=self.QUERIES['csharp']),
             
             # Web/JS Languages
@@ -154,21 +175,27 @@ class Config:
             'css': FileTypeConfig(['.css', '.scss', '.sass', '.less'], 'css', 'treesitter', 'CSS files', query_scm=self.QUERIES.get('css')),
             'typescript': FileTypeConfig(['.ts'], 'typescript', 'treesitter', 'TypeScript files', query_scm=self.QUERIES.get('typescript')),
             'tsx': FileTypeConfig(['.tsx'], 'tsx', 'treesitter', 'TSX files', query_scm=self.QUERIES.get('tsx')),
+            'vue': FileTypeConfig(['.vue'], 'vue', 'treesitter', 'Vue files', query_scm=self.QUERIES.get('vue')),
+            'svelte': FileTypeConfig(['.svelte'], 'svelte', 'treesitter', 'Svelte files', query_scm=self.QUERIES.get('svelte')),
             
             # Data/Config
             'json': FileTypeConfig(['.json'], 'json', 'treesitter', 'JSON files', query_scm=self.QUERIES.get('json')),
             'yaml': FileTypeConfig(['.yaml', '.yml'], 'yaml', 'treesitter', 'YAML files', query_scm=self.QUERIES.get('yaml')),
             'toml': FileTypeConfig(['.toml'], 'toml', 'treesitter', 'TOML files', query_scm=self.QUERIES.get('toml')),
             'xml': FileTypeConfig(['.xml'], 'xml', 'treesitter', 'XML files', query_scm=self.QUERIES.get('xml')),
+            'graphql': FileTypeConfig(['.graphql', '.gql'], 'graphql', 'treesitter', 'GraphQL files', query_scm=self.QUERIES.get('graphql')),
             
             # Query/Protocols
             'sql': FileTypeConfig(['.sql'], 'sql', 'treesitter', 'SQL files', query_scm=self.QUERIES.get('sql')),
             'protobuf': FileTypeConfig(['.proto'], 'protobuf', 'treesitter', 'Protocol Buffer files', query_scm=self.QUERIES.get('protobuf')),
+            'thrift': FileTypeConfig(['.thrift'], 'thrift', 'treesitter', 'Thrift files', query_scm=self.QUERIES.get('thrift')),
             
-            # Scripts/Configs
+            # Scripts/Build/Config
             'bash': FileTypeConfig(['.sh', '.bash'], 'bash', 'treesitter', 'Shell scripts', query_scm=self.QUERIES.get('bash')),
-            'dockerfile': FileTypeConfig(['Dockerfile','.dockerfile'], 'dockerfile', 'treesitter', 'Docker files', query_scm=self.QUERIES.get('dockerfile')),
+            'dockerfile': FileTypeConfig(['Dockerfile', '.dockerfile'], 'dockerfile', 'treesitter', 'Docker files', query_scm=self.QUERIES.get('dockerfile')),
             'terraform': FileTypeConfig(['.tf', '.tfvars'], 'terraform', 'treesitter', 'Terraform files', query_scm=self.QUERIES.get('terraform')),
+            'cmake': FileTypeConfig(['CMakeLists.txt', '.cmake'], 'cmake', 'treesitter', 'CMake files', query_scm=self.QUERIES.get('cmake')),
+            'make': FileTypeConfig(['Makefile', '.mk'], 'make', 'treesitter', 'Makefiles', query_scm=self.QUERIES.get('make')),
             
             # Functional
             'haskell': FileTypeConfig(['.hs'], 'haskell', 'treesitter', 'Haskell source', query_scm=self.QUERIES.get('haskell')),
@@ -177,10 +204,13 @@ class Config:
             
             # Documentation
             'markdown': FileTypeConfig(['.md', '.markdown'], 'markdown', 'treesitter', 'Markdown files', query_scm=self.QUERIES.get('markdown')),
+            'rst': FileTypeConfig(['.rst'], 'rst', 'treesitter', 'reStructuredText files', query_scm=self.QUERIES.get('rst')),
+            'latex': FileTypeConfig(['.tex'], 'latex', 'treesitter', 'LaTeX files', query_scm=self.QUERIES.get('latex')),
             
             # Scientific/Data
             'r': FileTypeConfig(['.r', '.R'], 'r', 'treesitter', 'R source', query_scm=self.QUERIES.get('r')),
             'julia': FileTypeConfig(['.jl'], 'julia', 'treesitter', 'Julia source', query_scm=self.QUERIES.get('julia')),
+            'matlab': FileTypeConfig(['.m'], 'matlab', 'treesitter', 'MATLAB source', query_scm=self.QUERIES.get('matlab')),
             
             # Blockchain/Smart Contracts
             'solidity': FileTypeConfig(['.sol'], 'solidity', 'treesitter', 'Solidity files', query_scm=self.QUERIES.get('solidity')),
