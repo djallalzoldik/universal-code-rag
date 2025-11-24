@@ -58,9 +58,10 @@ def process_file_worker(args) -> Tuple[str, str, List, Optional[str]]:
         
         # Check if it's a generic tree-sitter language
         file_config = CONFIG.file_types.get(language)
-        if file_config and file_config.parser_type == 'treesitter' and file_config.query_scm:
-            from chunkers import GenericTreeSitterChunker
-            chunker = GenericTreeSitterChunker(
+        if file_config and file_config.parser_type == 'treesitter':
+            from chunkers import AdaptiveChunker
+            # Use AdaptiveChunker with architecture-aware fallback
+            chunker = AdaptiveChunker(
                 language_name=language,
                 query_scm=file_config.query_scm
             )
