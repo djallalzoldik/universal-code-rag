@@ -57,6 +57,7 @@ class Config:
             'cuda': """(function_definition) @function (kernel_call) @kernel""",
             'fortran': """(subroutine) @subroutine (function) @function (module) @module""",
             'asm': """(instruction) @instruction (label) @label""",
+            'carbon': """(function_declaration) @function (class_declaration) @class""",
             
             # .NET
             'csharp': """(class_declaration) @class (interface_declaration) @interface (enum_declaration) @enum (method_declaration) @method (namespace_declaration) @namespace""",
@@ -71,6 +72,7 @@ class Config:
             'elixir': """(call) @function (defmodule) @module""",
             'erlang': """(function_clause) @function (module_attribute) @module""",
             'dart': """(class_definition) @class (function_signature) @function""",
+            'actionscript': """(class_definition) @class (function_definition) @function""",
             
             # Shell/Scripting
             'bash': """(function_definition) @function (command) @command""",
@@ -88,6 +90,7 @@ class Config:
             'scheme': """(definition) @function (lambda) @lambda""",
             'commonlisp': """(defun) @function (defclass) @class""",
             'reasonml': """(value_declaration) @function (type_declaration) @type""",
+            'agda': """(function_definition) @function (data_definition) @data""",
             
             # Web/JS Ecosystem
             'javascript': """(class_declaration) @class (function_declaration) @function (method_definition) @method""",
@@ -105,6 +108,8 @@ class Config:
             'toml': """(table) @table (pair) @pair""",
             'xml': """(element) @element (attribute) @attribute""",
             'csv': """(row) @row (field) @field""",
+            'ini': """(section) @section (property) @property""",
+            'properties': """(property) @property (comment) @comment""",
             
             # Query/API Languages
             'sql': """(select_statement) @select (create_statement) @create (function_definition) @function""",
@@ -123,27 +128,67 @@ class Config:
             'make': """(rule) @rule (variable_assignment) @variable""",
             'ninja': """(rule) @rule (build) @build""",
             'bazel': """(call) @rule (assignment) @variable""",
+            'bitbake': """(function_definition) @function (assignment) @variable""",
             
             # Documentation
             'markdown': """(atx_heading) @heading (fenced_code_block) @code (link_definition) @link""",
             'rst': """(section) @section (directive) @directive""",
             'latex': """(generic_command) @command (generic_environment) @environment""",
             'org': """(headline) @heading (block) @block""",
+            'bibtex': """(entry) @entry (field) @field""",
+            'pod': """(command) @command (paragraph) @paragraph""",
             
             # Scientific/Data
             'r': """(function_definition) @function (binary_operator) @operator""",
             'julia': """(function_definition) @function (struct_definition) @struct""",
             'matlab': """(function_definition) @function (assignment) @assignment""",
+            'scilab': """(function_definition) @function (assignment) @assignment""",
             
             # Hardware Description
             'verilog': """(module_declaration) @module (function_declaration) @function""",
             'vhdl': """(entity_declaration) @entity (architecture_body) @architecture""",
+            'systemverilog': """(module_declaration) @module (class_declaration) @class""",
             
             # Blockchain/Smart Contracts
             'solidity': """(contract_declaration) @contract (function_definition) @function""",
+            'cairo': """ (function_definition) @function (struct_definition) @struct""",
+            'clarity': """(define_function) @function (define_public) @public""",
+            
+            # Mobile/Embedded
+            'apex': """(class_declaration) @class (method_declaration) @method""",
+            'arduino': """(function_definition) @function (compound_statement) @block""",
+            
+            # Accounting/Finance
+            'beancount': """(transaction) @transaction (account) @account""",
+            'ledger': """(transaction) @transaction (posting) @posting""",
             
             # Other Domain-Specific
             'ada': """(subprogram_declaration) @function (package_declaration) @package""",
+            'bicep': """(resource_declaration) @resource (output_declaration) @output""",
+            'chatito': """(entity_definition) @entity (intent_definition) @intent""",
+            'devicetree': """(node) @node (property) @property""",
+            'dot': """(graph) @graph (node_stmt) @node (edge_stmt) @edge""",
+            'git_config': """(section) @section (variable) @variable""",
+            'git_rebase': """(command) @command (label) @label""",
+            'gitattributes': """(pattern) @pattern (attribute) @attribute""",
+            'gitignore': """(pattern) @pattern (comment) @comment""",
+            'gpg': """(command) @command (argument) @argument""",
+            'http': """(request) @request (header) @header""",
+            'ini': """(section) @section (property) @property""",
+            'just': """(recipe) @recipe (dependency) @dependency""",
+            'kdl': """(node) @node (property) @property""",
+            'meson': """(function_call) @function (assignment) @variable""",
+            'nix': """(function) @function (binding) @binding""",
+            'passwd': """(entry) @entry (field) @field""",
+            'smithy': """(shape) @shape (trait) @trait""",
+            'starlark': """(function_definition) @function (assignment) @assignment""",
+            'textproto': """(message) @message (field) @field""",
+            'todotxt': """(task) @task (priority) @priority""",
+            'tsv': """(row) @row (field) @field""",
+            'udev': """(rule) @rule (assignment) @assignment""",
+            'urll': """(url) @url (query) @query""",
+            'requirements': """(requirement) @package (specifier) @version""",
+        }
         }
         
         # File type configurations
