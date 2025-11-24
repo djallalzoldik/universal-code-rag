@@ -1,0 +1,33 @@
+# Application Configuration
+# SECTION_BASED architecture test
+
+database:
+  host: localhost
+  port: 5432
+  username: admin
+  password: secret
+  database: myapp
+  pool_size: 10
+
+cache:
+  enabled: true
+  ttl: 3600
+  max_size: 1000
+  redis_url: redis://localhost:6379
+
+logging:
+  level: INFO
+  format: json
+  output: /var/log/app.log
+  rotate: daily
+  
+server:
+  host: 0.0.0.0
+  port: 8080
+  workers: 4
+  timeout: 30
+
+features:
+  authentication: true
+  rate_limiting: true
+  api_versioning: true

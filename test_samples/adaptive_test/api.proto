@@ -1,0 +1,78 @@
+// Protocol Buffer - SCHEMA_BASED Architecture
+syntax = "proto3";
+
+package example;
+
+// User message definition
+message User {
+  int32 id = 1;
+  string username = 2;
+  string email = 3;
+  repeated string roles = 4;
+  
+  message Address {
+    string street = 1;
+    string city = 2;
+    string country = 3;
+    string postal_code = 4;
+  }
+  
+  Address address = 5;
+  int64 created_at = 6;
+}
+
+// Post message definition
+message Post {
+  int32 id = 1;
+  int32 author_id = 2;
+  string title = 3;
+  string content = 4;
+  repeated string tags = 5;
+  int64 published_at = 6;
+  
+  enum Status {
+    DRAFT = 0;
+    PUBLISHED = 1;
+    ARCHIVED = 2;
+  }
+  
+  Status status = 7;
+}
+
+// Service definition
+service UserService {
+  rpc GetUser(GetUserRequest) returns (User);
+  rpc CreateUser(CreateUserRequest) returns (User);
+  rpc UpdateUser(UpdateUserRequest) returns (User);
+  rpc DeleteUser(DeleteUserRequest) returns (Empty);
+  rpc ListUsers(ListUsersRequest) returns (UserList);
+}
+
+message GetUserRequest {
+  int32 id = 1;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message UpdateUserRequest {
+  int32 id = 1;
+  User user = 2;
+}
+
+message DeleteUserRequest {
+  int32 id = 1;
+}
+
+message ListUsersRequest {
+  int32 page = 1;
+  int32 page_size = 2;
+}
+
+message UserList {
+  repeated User users = 1;
+  int32 total = 2;
+}
+
+message Empty {}
