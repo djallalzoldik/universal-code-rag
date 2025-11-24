@@ -1,0 +1,64 @@
+# Complex TOML configuration file
+
+title = "Advanced TOML Configuration"
+
+[owner]
+name = "John Doe"
+dob = 1979-05-27T07:32:00-08:00
+
+[database]
+server = "192.168.1.1"
+ports = [ 8001, 8001, 8002 ]
+connection_max = 5000
+enabled = true
+
+[database.credentials]
+user = "admin"
+password = "secret"
+
+[servers]
+
+  [servers.alpha]
+  ip = "10.0.0.1"
+  dc = "eqdc10"
+  
+  [servers.beta]
+  ip = "10.0.0.2"
+  dc = "eqdc10"
+  priority = 100
+
+[clients]
+data = [ ["gamma", "delta"], [1, 2] ]
+hosts = [
+  "alpha",
+  "omega"
+]
+
+[[products]]
+name = "Hammer"
+sku = 738594937
+color = "red"
+
+[[products]]
+name = "Nail"
+sku = 284758393
+color = "gray"
+
+[security]
+encryption = true
+algorithms = ["AES-256", "RSA-2048"]
+
+[security.ssl]
+enabled = true
+cert_path = "/etc/ssl/certs/server.crt"
+key_path = "/etc/ssl/private/server.key"
+
+[logging]
+level = "INFO"
+format = "json"
+outputs = ["stdout", "file"]
+
+  [logging.file]
+  path = "/var/log/app.log"
+  max_size = "100MB"
+  rotate = true

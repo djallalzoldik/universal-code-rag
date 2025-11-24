@@ -1,0 +1,75 @@
+/* Complex CSS with advanced features */
+
+/* CSS Variables */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+}
+
+/* Complex selectors */
+.container > .header + .content:not(.disabled):hover {
+    background-color: var(--primary-color);
+    transition: all var(--transition-speed) ease-in-out;
+}
+
+/* Nested media queries */
+@media screen and (min-width: 768px) {
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    @supports (display: grid) {
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+}
+
+/* Keyframe animations */
+@keyframes slideIn {
+    0% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Pseudo-elements and classes */
+.button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    z-index: -1;
+}
+
+.button:active::after {
+    transform: scale(0.95);
+}
+
+/* Complex grid layout */
+.dashboard {
+    display: grid;
+    grid-template-areas:
+        "header header header"
+        "sidebar main main"
+        "footer footer footer";
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+}
+
+.header { grid-area: header; }
+.sidebar { grid-area: sidebar; }
+.main { grid-area: main; }
+.footer { grid-area: footer; }
