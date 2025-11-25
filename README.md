@@ -54,17 +54,27 @@ The easiest way to run the system is using Docker. You **must** mount your sourc
 # 1. Build the image
 docker build -t chrome-rag .
 
-# 2. Run the container (Mounting Volumes is REQUIRED)
-# Syntax: -v /host/path/to/code:/source
+# 2. Pre-download embedding model (first time only, ~79MB)
+mkdir -p ~/chrome-rag-cache
+wget -O ~/chrome-rag-cache/onnx_models/all-MiniLM-L6-v2/onnx.tar.gz \
+  https://chroma-onnx-models.s3.amazonaws.com/all-MiniLM-L6-v2/onnx.tar.gz
+
+# 3. Run the container (Mounting Volumes is REQUIRED)
+# Note: All 3 volume mounts are required
 docker run --rm \
   -v /path/to/your/code:/source \
   -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
   chrome-rag index --path /source
 ```
 
-**Why mount volumes?**
-- `-v /path/to/your/code:/source`: Maps your local code to `/source` inside the container.
-- `-v $(pwd)/chrome_rag_db:/app/chrome_rag_db`: Saves the index locally so it persists after the container stops.
+**Volume Mounts Explained:**
+- `-v /path/to/your/code:/source`: Maps your local code to `/source` inside the container
+- `-v $(pwd)/chrome_rag_db:/app/chrome_rag_db`: Saves the index locally so it persists after the container stops
+- `-v ~/chrome-rag-cache:/root/.cache/chroma`: Caches the embedding model to avoid re-downloading (79MB)
+
+**Expected Warnings:**
+You may see warnings like `Failed to initialize sql parser` or `Invalid node type for markdown`. These are **normal and non-blocking**. The system automatically falls back to alternative chunking strategies and successfully indexes all files (verify with `Files Failed: 0` in the final statistics).
 
 For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
