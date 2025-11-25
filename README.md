@@ -98,20 +98,96 @@ python cli.py --help
 
 ## 📖 Usage Guide
 
-### 1. Indexing Code
-Index a local directory containing source code. The system will automatically detect languages and chunk code.
+### Docker Usage (Recommended)
 
+All commands work the same with Docker - just prefix with the Docker run command and mount your volumes.
+
+**Base Docker Command Format:**
+```bash
+docker run --rm \
+  -v /path/to/your/code:/source \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag [COMMAND] [OPTIONS]
+```
+
+---
+
+### 1. Indexing Code
+
+Index a directory containing source code. The system automatically detects languages and chunks code intelligently.
+
+**Docker:**
+```bash
+# Index entire directory
+docker run --rm \
+  -v /path/to/chromium/src:/source \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag index --path /source
+
+# Index only specific file types (faster)
+docker run --rm \
+  -v /path/to/chromium/src:/source \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag index --path /source --file-types cpp,python,mojom
+
+# Clear database and reindex
+docker run --rm \
+  -v /path/to/chromium/src:/source \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag index --path /source --clear
+
+# Force re-index all files (ignore incremental state)
+docker run --rm \
+  -v /path/to/chromium/src:/source \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag index --path /source --force
+```
+
+**Local:**
 ```bash
 # Index the entire Chrome src directory
 python cli.py index --path /path/to/chromium/src
 
 # Index only specific languages (faster)
 python cli.py index --path /src --file-types cpp,python,mojom
+
+# Clear and reindex
+python cli.py index --path /src --clear
 ```
 
-### 2. Semantic Search
-Search for concepts, vulnerabilities, or code patterns.
+---
 
+### 2. Semantic Search
+
+Search for concepts, vulnerabilities, or code patterns using natural language.
+
+**Docker:**
+```bash
+# General search
+docker run --rm \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag search --query "buffer overflow in render process"
+
+# Filtered search (C++ only, top 10 results)
+docker run --rm \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag search --query "memory allocation" --language cpp --n-results 10
+
+# Search in specific code types (only functions)
+docker run --rm \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag search --query "authentication logic" --type function
+```
+
+**Local:**
 ```bash
 # General search
 python cli.py search --query "buffer overflow in render process"
@@ -120,9 +196,34 @@ python cli.py search --query "buffer overflow in render process"
 python cli.py search --query "memory allocation" --language cpp --n-results 10
 ```
 
-### 3. Symbol Lookup
-Find definitions of specific classes, functions, or structs.
+---
 
+### 3. Symbol Lookup
+
+Find definitions of specific classes, functions, or structs by exact name.
+
+**Docker:**
+```bash
+# Find a class definition
+docker run --rm \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag symbol --name RenderFrameHost --type class
+
+# Find a function across all languages
+docker run --rm \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag symbol --name ProcessMessage
+
+# Find in specific language
+docker run --rm \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag symbol --name HandleRequest --language python
+```
+
+**Local:**
 ```bash
 # Find a class definition
 python cli.py symbol --name RenderFrameHost --type class
@@ -131,19 +232,74 @@ python cli.py symbol --name RenderFrameHost --type class
 python cli.py symbol --name ProcessMessage
 ```
 
-### 4. Database Statistics
-View insights about the indexed codebase.
+---
 
+### 4. Database Statistics
+
+View insights about the indexed codebase - total files, chunks, languages, etc.
+
+**Docker:**
+```bash
+docker run --rm \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag stats
+```
+
+**Local:**
 ```bash
 python cli.py stats
 ```
 
-### 5. Web Interface
+---
+
+### 5. Clear Database
+
+Remove all indexed data and start fresh.
+
+**Docker:**
+```bash
+docker run --rm \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag clear
+```
+
+**Local:**
+```bash
+python cli.py clear
+```
+
+---
+
+### 6. Web Interface (Local Only)
+
 Launch the Streamlit-based UI for interactive exploration.
 
 ```bash
 streamlit run web_app.py
 ```
+
+> **Note:** Web interface is not available in Docker. For interactive use, run locally or use the CLI commands above.
+
+---
+
+### Common Docker Tips
+
+**Shorter Alias:**
+Add this to your `~/.bashrc` or `~/.zshrc`:
+```bash
+alias chrome-rag='docker run --rm \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  -v ~/chrome-rag-cache:/root/.cache/chroma \
+  chrome-rag'
+```
+
+Then use: `chrome-rag stats` or `chrome-rag search --query "XSS vulnerability"`
+
+**Production deployment** with docker-compose, health checks, and resource limits: see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+**Quick Docker Reference Guide:** see [DOCKER_RUN_GUIDE.md](DOCKER_RUN_GUIDE.md).
 
 ---
 
