@@ -62,7 +62,7 @@ def process_file_worker(args) -> Tuple[str, str, List, Optional[str]]:
             from chunkers import AdaptiveChunker
             # Use AdaptiveChunker with architecture-aware fallback
             chunker = AdaptiveChunker(
-                language_name=language,
+                language=language,
                 query_scm=file_config.query_scm
             )
         # Fallback to specific chunkers (legacy)

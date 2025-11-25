@@ -52,11 +52,13 @@ def run_test():
     
     # Clear database first
     print("🧹 Clearing database...")
+    # Get project root (parent of tests directory)
+    project_root = Path(__file__).parent.parent
     result = subprocess.run(
-        ["./venv/bin/python", "cli.py", "clear"],
+        [sys.executable, "cli.py", "clear"],
         capture_output=True,
         text=True,
-        cwd=os.path.dirname(os.path.abspath(__file__))
+        cwd=str(project_root)
     )
     if result.returncode != 0:
         print(f"❌ Failed to clear database")
@@ -71,10 +73,10 @@ def run_test():
             paths.extend(["--path", dir])
     
     result = subprocess.run(
-        ["./venv/bin/python", "cli.py", "index"] + paths,
+        [sys.executable, "cli.py", "index"] + paths,
         capture_output=True,
         text=True,
-        cwd=os.path.dirname(os.path.abspath(__file__))
+        cwd=str(project_root)
     )
     
     print(result.stdout)
@@ -89,10 +91,10 @@ def run_test():
     # Check statistics
     print("📊 Checking statistics...")
     result = subprocess.run(
-        ["./venv/bin/python", "cli.py", "stats"],
+        [sys.executable, "cli.py", "stats"],
         capture_output=True,
         text=True,
-        cwd=os.path.dirname(os.path.abspath(__file__))
+        cwd=str(project_root)
     )
     print(result.stdout)
     

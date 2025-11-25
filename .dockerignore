@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Testing
+.pytest_cache/
+test_db/
+.coverage
+htmlcov/
+*.cover
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Documentation (not needed in container)
+*.md
+!README.md
+GUIDE_AR.md
+
+# Database (should be mounted as volume)
+chrome_rag_db/
+index_state.db
+
+# Logs
+logs/
+*.log
+
+# Large test data (mount as volume if needed)
+test_samples/
+
+# Temporary files
+*.tmp
+*.bak
+.DS_Store

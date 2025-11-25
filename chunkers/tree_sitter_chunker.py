@@ -5,7 +5,7 @@ Allows adding support for new languages by simply providing a query
 """
 
 from typing import List, Optional, Dict
-from tree_sitter import Language, Parser, Node
+from tree_sitter import Language, Parser, Node, QueryCursor
 
 from .base_chunker import BaseChunker, CodeChunk
 from utils.logger import get_logger
@@ -48,17 +48,16 @@ class GenericTreeSitterChunker(BaseChunker):
             tree = self.parser.parse(bytes(code, "utf8"))
             chunks = []
             
-            # Execute query using matches (correct API for tree-sitter-python)
-            matches = self.query.matches(tree.root_node)
+            # Execute query using QueryCursor (correct API for tree-sitter-python)
+            # QueryCursor.captures() returns iterator of (Node, str) tuples
+            cursor = QueryCursor()
+            captures = cursor.captures(self.query, tree.root_node)
             
-            # matches is a list of (pattern_index, captures_dict) tuples
-            # captures_dict maps capture names to lists of nodes
-            for pattern_index, captures_dict in matches:
-                for capture_name, nodes in captures_dict.items():
-                    for node in nodes:
-                        chunk = self._create_chunk_from_capture(node, capture_name, code, filepath)
-                        if chunk and self._should_include_chunk(chunk):
-                            chunks.append(chunk)
+            # Process each captured node
+            for node, capture_name in captures:
+                chunk = self._create_chunk_from_capture(node, capture_name, code, filepath)
+                if chunk and self._should_include_chunk(chunk):
+                    chunks.append(chunk)
             
             return chunks
             

@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  chrome-rag:
+    build: .
+    image: chrome-rag:latest
+    container_name: chrome-rag-prod
+
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+    # Health check
+    healthcheck:
+      test: [ "CMD", "python", "health_check.py" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    # Volume mounts
+    volumes:
+      - ./chrome_rag_db:/app/chrome_rag_db
+      - ./logs:/app/logs
+      - ./source:/source:ro # Mount source code as read-only
+
+    # Environment variables
+    environment:
+      - LOG_LEVEL=INFO
+      - DB_PATH=/app/chrome_rag_db
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Keep container running for exec commands
+    command: tail -f /dev/null
+
+    # Network
+    networks:
+      - chrome-rag-network
+
+networks:
+  chrome-rag-network:
+    driver: bridge

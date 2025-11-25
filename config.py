@@ -189,7 +189,6 @@ class Config:
             'urll': """(url) @url (query) @query""",
             'requirements': """(requirement) @package (specifier) @version""",
         }
-        }
         
         # File type configurations
         self.file_types = {
@@ -295,7 +294,7 @@ class Config:
             
             'haskell': FileTypeConfig(['.hs'], 'haskell', 'treesitter', 'Haskell source', query_scm=self.QUERIES.get('haskell')),
             'ocaml': FileTypeConfig(['.ml', '.mli'], 'ocaml', 'treesitter', 'OCaml source', query_scm=self.QUERIES.get('ocaml')),
-            'swift': FileTypeConfig(['.swift'], 'swift', 'treesitter', 'Swift source', query_scm=sel f.QUERIES.get('swift')),
+            'swift': FileTypeConfig(['.swift'], 'swift', 'treesitter', 'Swift source', query_scm=self.QUERIES.get('swift')),
             'elm': FileTypeConfig(['.elm'], 'elm', 'treesitter', 'Elm source', query_scm=self.QUERIES.get('elm')),
             'purescript': FileTypeConfig(['.purs'], 'purescript', 'treesitter', 'PureScript source', query_scm=self.QUERIES.get('purescript')),
             'racket': FileTypeConfig(['.rkt'], 'racket', 'treesitter', 'Racket source', query_scm=self.QUERIES.get('racket')),
