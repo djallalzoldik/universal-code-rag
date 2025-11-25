@@ -193,10 +193,10 @@ class Config:
         # File type configurations
         self.file_types = {
             'cpp': FileTypeConfig(
-                extensions=['.cc', '.cpp', '.h', '.hpp', '.c', '.cxx'],
+                extensions=['.cc', '.cpp', '.h', '.hpp', '.c', '.cxx', '.m', '.mm'],
                 language='cpp',
                 parser_type='treesitter',
-                description='C++ source and header files'
+                description='C/C++/Obj-C source and header files'
             ),
             'python': FileTypeConfig(
                 extensions=['.py'],
