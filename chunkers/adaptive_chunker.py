@@ -16,6 +16,10 @@ from .file_architectures import (
 from utils.logger import get_logger
 
 
+# Module-level cache to prevent duplicate warning spam
+_LOGGED_ERRORS = set()
+
+
 class AdaptiveChunker(BaseChunker):
     """
     Adaptive chunker that intelligently selects chunking strategy
@@ -39,7 +43,10 @@ class AdaptiveChunker(BaseChunker):
             try:
                 self.ts_chunker = GenericTreeSitterChunker(language, query_scm)
             except Exception as e:
-                self.logger.warning(f"Could not create tree-sitter chunker for {language}: {e}")
+                # Only log each language error once to avoid console spam
+                if language not in _LOGGED_ERRORS:
+                    _LOGGED_ERRORS.add(language)
+                    self.logger.warning(f"Could not create tree-sitter chunker for {language}: {e}")
     
     def extract_chunks(self, code: str, filepath: str) -> List[CodeChunk]:
         """
