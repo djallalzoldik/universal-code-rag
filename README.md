@@ -48,15 +48,23 @@ The system intelligently chunks and indexes:
 
 ### Option 1: Docker (Recommended)
 
-The easiest way to run the system is using Docker.
+The easiest way to run the system is using Docker. You **must** mount your source code and database directory for the container to access them.
 
 ```bash
 # 1. Build the image
 docker build -t chrome-rag .
 
-# 2. Run the container
-docker run --rm chrome-rag --help
+# 2. Run the container (Mounting Volumes is REQUIRED)
+# Syntax: -v /host/path/to/code:/source
+docker run --rm \
+  -v /path/to/your/code:/source \
+  -v $(pwd)/chrome_rag_db:/app/chrome_rag_db \
+  chrome-rag index --path /source
 ```
+
+**Why mount volumes?**
+- `-v /path/to/your/code:/source`: Maps your local code to `/source` inside the container.
+- `-v $(pwd)/chrome_rag_db:/app/chrome_rag_db`: Saves the index locally so it persists after the container stops.
 
 For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
