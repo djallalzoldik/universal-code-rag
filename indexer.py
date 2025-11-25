@@ -154,13 +154,25 @@ class ChromeIndexer:
             
         # Filter files that need processing
         files_to_process = []
+        files_by_lang = defaultdict(int)
         for fp, lang in all_files:
+            files_by_lang[lang] += 1
             if self.state_manager.should_process(str(fp)):
                 files_to_process.append((fp, lang))
             else:
                 self.stats['files_skipped'] += 1
         
         self.logger.info(f"Found {len(all_files)} files ({len(files_to_process)} new/modified, {self.stats['files_skipped']} skipped)")
+        
+        # Display file breakdown by type
+        if files_by_lang:
+            print("\n📊 Files to Index by Type:")
+            print("─" * 40)
+            for lang in sorted(files_by_lang.keys()):
+                count = files_by_lang[lang]
+                print(f"  • {lang.ljust(15)} : {count:>4} files")
+            print("─" * 40)
+            print(f"  Total: {len(all_files)} files\n")
         
         if not files_to_process:
             print_success("All files are up to date!")
@@ -189,6 +201,10 @@ class ChromeIndexer:
             
             try:
                 for file_path, language, chunks, error in iterator:
+                    # Print current file being processed
+                    rel_path = Path(file_path).relative_to(source_path) if Path(file_path).is_relative_to(source_path) else Path(file_path).name
+                    self.logger.info(f"Processing: {rel_path} ({language})")
+                    
                     if error:
                         self.logger.error(f"Failed to process {file_path}: {error}")
                         self.stats['files_failed'] += 1
