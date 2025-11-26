@@ -136,13 +136,15 @@ class ChromeRAGSystem:
         Returns:
             List of matching chunks with metadata
         """
-        where_clause = {"name": symbol_name}
+        conditions = [{"name": symbol_name}]
         
         if symbol_type:
-            where_clause["type"] = symbol_type
+            conditions.append({"type": symbol_type})
         
         if language:
-            where_clause["language"] = language
+            conditions.append({"language": language})
+            
+        where_clause = {"$and": conditions} if len(conditions) > 1 else conditions[0]
         
         try:
             results = self.collection.get(
@@ -171,11 +173,18 @@ class ChromeRAGSystem:
         """
         # 1. Vector Search
         vector_results = []
-        where_clause = {}
+        
+        conditions = []
         if language:
-            where_clause["language"] = language
+            conditions.append({"language": language})
         if file_type:
-            where_clause["type"] = file_type
+            conditions.append({"type": file_type})
+            
+        where_clause = {}
+        if len(conditions) > 1:
+            where_clause = {"$and": conditions}
+        elif len(conditions) == 1:
+            where_clause = conditions[0]
             
         try:
             v_res = self.collection.query(
